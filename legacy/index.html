@@ -40,38 +40,17 @@
 
     body {
       font-family: 'Cera Pro', sans-serif;
-      background: #f0f0f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100svh;
+      background: #F5F5F9;
+      margin: 0;
+      padding: 0;
     }
 
     .phone-frame {
-      width: 375px;
-      height: 812px;
+      width: 100%;
+      min-height: 100svh;
       background: #F5F5F9;
-      border-radius: 44px;
       overflow: hidden;
       position: relative;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.08);
-    }
-
-    @media (max-width: 430px) {
-      body { padding: 0; }
-      .phone-frame {
-        width: 100%;
-        height: 100svh;
-        border-radius: 0;
-        box-shadow: none;
-      }
-    }
-
-    @media (min-width: 431px) and (max-width: 900px) {
-      .phone-frame {
-        width: 375px;
-        height: min(812px, 95svh);
-      }
     }
 
     /* Status bar */
@@ -1496,28 +1475,6 @@
 <div class="phone-frame">
 
   <!-- Status Bar -->
-  <div class="status-bar">
-    <div class="status-time">9:41</div>
-    <div class="status-icons">
-      <svg width="17" height="12" viewBox="0 0 17 12">
-        <rect x="0" y="7" width="3" height="5" rx="0.5"/>
-        <rect x="4.5" y="5" width="3" height="7" rx="0.5"/>
-        <rect x="9" y="2.5" width="3" height="9.5" rx="0.5"/>
-        <rect x="13.5" y="0" width="3" height="12" rx="0.5"/>
-      </svg>
-      <svg width="16" height="12" viewBox="0 0 16 12">
-        <path d="M8 9.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
-        <path d="M8 6C5.8 6 3.8 6.9 2.3 8.3l1.4 1.4C4.8 8.6 6.3 8 8 8s3.2.6 4.3 1.7l1.4-1.4C12.2 6.9 10.2 6 8 6z"/>
-        <path d="M8 2C4.7 2 1.7 3.3 0 5.5l1.5 1.5C3 5.3 5.4 4 8 4s5 1.3 6.5 3l1.5-1.5C14.3 3.3 11.3 2 8 2z"/>
-      </svg>
-      <svg width="25" height="12" viewBox="0 0 25 12">
-        <rect x="0" y="1" width="21" height="10" rx="2.5" stroke="#000" stroke-width="1" fill="none"/>
-        <rect x="22" y="3.5" width="2" height="5" rx="1" fill="#000"/>
-        <rect x="1.5" y="2.5" width="17" height="7" rx="1.5" fill="#000"/>
-      </svg>
-    </div>
-  </div>
-
   <!-- ── Screen 1: Auth ── -->
   <div class="screen" id="screenAuth">
     <div class="content">
