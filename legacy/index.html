@@ -47,7 +47,7 @@
 
     .phone-frame {
       width: 100%;
-      min-height: 100svh;
+      height: 100svh;
       background: #F5F5F9;
       overflow: hidden;
       position: relative;
@@ -79,9 +79,11 @@
 
     /* ─── SCREEN BASE ─── */
     .screen {
-      height: calc(100% - 44px);
+      height: 100%;
       display: flex;
       flex-direction: column;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .screen.hidden { display: none; }
@@ -1943,7 +1945,7 @@
     </div>
 
     <!-- Content -->
-    <div style="flex:1;display:flex;flex-direction:column;padding:16px 24px 24px;gap:20px;">
+    <div style="flex:1;display:flex;flex-direction:column;padding:16px 24px 24px;gap:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;">
 
       <!-- Icon -->
       <div style="display:flex;justify-content:center;padding:32px 0 24px;">
