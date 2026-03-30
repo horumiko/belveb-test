@@ -1,0 +1,2745 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>БелВЭБ — Авторизация</title>
+  <style>
+    @font-face {
+      font-family: 'Cera Pro';
+      src: url('/fonts/Cera Pro Light.ttf') format('truetype');
+      font-weight: 300;
+    }
+    @font-face {
+      font-family: 'Cera Pro';
+      src: url('/fonts/Cera Pro Medium.ttf') format('truetype');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Cera Pro';
+      src: url('/fonts/Cera Pro Medium.ttf') format('truetype');
+      font-weight: 500;
+    }
+    @font-face {
+      font-family: 'Cera Pro';
+      src: url('/fonts/Cera Pro Bold.ttf') format('truetype');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'Cera Pro';
+      src: url('/fonts/Cera Pro Black.ttf') format('truetype');
+      font-weight: 900;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Cera Pro', sans-serif;
+    }
+
+    body {
+      font-family: 'Cera Pro', sans-serif;
+      background: #f0f0f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100svh;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: #F5F5F9;
+      border-radius: 44px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.08);
+    }
+
+    @media (max-width: 430px) {
+      body { padding: 0; }
+      .phone-frame {
+        width: 100%;
+        height: 100svh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+
+    @media (min-width: 431px) and (max-width: 900px) {
+      .phone-frame {
+        width: 375px;
+        height: min(812px, 95svh);
+      }
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 28px 0;
+      height: 44px;
+    }
+
+    .status-time {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000;
+      letter-spacing: -0.3px;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-icons svg { fill: #000; }
+
+    /* ─── SCREEN BASE ─── */
+    .screen {
+      height: calc(100% - 44px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen.hidden { display: none; }
+    .custom-dropdown.hidden { display: none; }
+
+    /* ─── AUTH SCREEN ─── */
+    .content {
+      flex: 1;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-bottom: 60px;
+    }
+
+    .logo { margin-bottom: 32px; }
+    .logo img { width: 100px; height: auto; }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333740;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      font-weight: 600;
+      color: #767A89;
+      margin-bottom: 2px;
+    }
+
+    .description {
+      font-size: 14px;
+      font-weight: 400;
+      color: #767A89;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .input-wrapper {
+      width: 336px;
+      height: 56px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 0 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-family: 'Cera Pro', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: #333740;
+      background: transparent;
+      letter-spacing: 0.3px;
+    }
+
+    .input-wrapper input::placeholder { color: #aeaeb2; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 17px;
+      background: #6177F3;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Cera Pro', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      margin-bottom: 16px;
+    }
+
+    .btn-primary:active {
+      background: #4f65e0;
+      transform: scale(0.98);
+    }
+
+    .disclaimer {
+      font-size: 11px;
+      font-weight: 400;
+      color: #b0b0be;
+      line-height: 1.5;
+    }
+
+    /* ─── BOTTOM NAV ─── */
+    .bottom-nav {
+      height: 90px;
+      background: #fff;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      padding-bottom: 8px;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      padding: 4px 0;
+      transition: opacity 0.15s;
+    }
+
+    .nav-item:active { opacity: 0.6; }
+
+    .nav-icon {
+      width: 60px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-icon img {
+      width: 60px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    /* ─── SMS CODE SCREEN ─── */
+    .sms-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 20px 0;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      width: 36px;
+      height: 36px;
+      margin-bottom: 48px;
+    }
+
+    .sms-heading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .sms-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333740;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .sms-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: #767A89;
+      text-align: center;
+      line-height: 1.5;
+      max-width: 280px;
+    }
+
+    /* 6-cell OTP — left aligned */
+    .sms-cells {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-start;
+    }
+
+    .sms-cell {
+      width: 46px;
+      height: 56px;
+      background: #fff;
+      border-radius: 14px;
+      border: 1.5px solid #E2E4EC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cera Pro', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #333740;
+      transition: border-color 0.15s;
+    }
+
+    .sms-cell.active {
+      border-color: #6177F3;
+      border-width: 2px;
+    }
+
+    /* ─── ДОГОВОР SCREEN ─── */
+    .dogovor-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 24px 0;
+    }
+
+    .dogovor-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-bottom: 32px;
+    }
+
+    .dogovor-title {
+      width: 327px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #333740;
+      line-height: 1.25;
+      margin-bottom: 20px;
+    }
+
+    .dogovor-link {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .dogovor-link img {
+      width: 22px;
+      height: 22px;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .dogovor-link-text {
+      width: 294px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #6177F3;
+      line-height: 1.4;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+
+    .dogovor-footer {
+      padding: 0 0 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 17px;
+      background: transparent;
+      color: #767A89;
+      border: 1.5px solid #C3C2D3;
+      border-radius: 14px;
+      font-family: 'Cera Pro', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-secondary:active {
+      background: #f0f0f5;
+      transform: scale(0.98);
+    }
+
+    /* ─── REGISTRATION SCREEN ─── */
+    .reg-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 16px 24px 0;
+      height: 56px;
+    }
+
+    .reg-navbar .back-btn {
+      position: absolute;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-bottom: 0;
+    }
+
+    .reg-navbar-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #333740;
+    }
+
+    .reg-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 24px 0;
+      gap: 20px;
+    }
+
+    .reg-hint {
+      background: #ECEDF8;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #333740;
+      line-height: 1.4;
+    }
+
+    .reg-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .reg-label {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333740;
+    }
+
+    .reg-input {
+      width: 100%;
+      height: 56px;
+      background: #fff;
+      border-radius: 14px;
+      border: none;
+      outline: none;
+      padding: 0 16px;
+      font-family: 'Cera Pro', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: #333740;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .reg-footer {
+      padding: 0 24px 32px;
+    }
+
+    .btn-primary-muted {
+      width: 100%;
+      padding: 17px;
+      background: #9FADF8;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Cera Pro', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-primary-muted.active-btn {
+      background: #6177F3;
+    }
+
+    .btn-primary-muted.active-btn:active {
+      background: #4f65e0;
+      transform: scale(0.98);
+    }
+
+    /* ─── PIN SCREEN ─── */
+    .pin-screen-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 24px 0;
+    }
+
+    .pin-heading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 8px;
+      margin-bottom: 20px;
+    }
+
+    .pin-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333740;
+      margin-bottom: 10px;
+    }
+
+    .pin-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: #767A89;
+      line-height: 1.5;
+      max-width: 260px;
+    }
+
+    .pin-dots {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 0;
+    }
+
+    .pin-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #D8D9E3;
+      transition: background 0.15s;
+    }
+
+    .pin-dot.filled {
+      background: #333740;
+    }
+
+    .pin-numpad {
+      display: flex;
+      flex-direction: column;
+      margin-top: 28px;
+      padding-bottom: 16px;
+    }
+
+    .pin-row {
+      display: flex;
+    }
+
+    .pin-key {
+      flex: 1;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.1s;
+    }
+
+    .pin-key:active { opacity: 0.5; }
+
+    .pin-key img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+    }
+
+    .pin-key-empty {
+      flex: 1;
+      height: 76px;
+      pointer-events: none;
+    }
+
+    .pin-key-backspace {
+      flex: 1;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.1s;
+    }
+
+    .pin-key-backspace:active { opacity: 0.5; }
+
+    .pin-key-backspace img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+    }
+
+    /* ─── BIOMETRIC SCREEN ─── */
+    .bio-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 24px 0;
+    }
+
+    .bio-illustration {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .bio-fingerprint {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bio-faceid {
+      position: absolute;
+      top: calc(50% - 80px);
+      left: calc(50% + 20px);
+      z-index: 2;
+    }
+
+    .bio-body {
+      padding-bottom: 8px;
+    }
+
+    .bio-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333740;
+      margin-bottom: 14px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .bio-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #333740;
+      margin-bottom: 8px;
+    }
+
+    .bio-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .bio-list li {
+      font-size: 14px;
+      font-weight: 400;
+      color: #767A89;
+      padding-left: 12px;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .bio-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #767A89;
+    }
+
+    .bio-footer {
+      padding: 20px 0 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: auto;
+    }
+
+    .btn-skip {
+      background: none;
+      border: none;
+      font-family: 'Cera Pro', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: #767A89;
+      cursor: pointer;
+      text-align: center;
+      padding: 4px 0;
+    }
+
+    .btn-skip:active { opacity: 0.6; }
+
+    /* ─── CATEGORIES SCREEN ─── */
+    .cat-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 24px 0;
+      overflow-y: auto;
+    }
+
+    .cat-content .back-btn {
+      margin-bottom: 16px;
+    }
+
+    .cat-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333740;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .cat-subtitle {
+      font-size: 14px;
+      font-weight: 400;
+      color: #767A89;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .cat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 10px 14px;
+      border-radius: 50px;
+      background: #fff;
+      border: 1.5px solid #E2E4EC;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333740;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .chip.chip-active {
+      background: #6177F3;
+      border-color: #6177F3;
+      color: #fff;
+    }
+
+    .cat-footer {
+      padding: 20px 0 32px;
+    }
+
+    /* ─── PRODUCT SCREEN ─── */
+    .product-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .product-header {
+      padding: 14px 24px 10px;
+      text-align: center;
+    }
+
+    .product-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #333740;
+    }
+
+    .product-tabs {
+      display: flex;
+      gap: 2px;
+      padding: 0 16px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .product-tabs::-webkit-scrollbar { display: none; }
+
+    .prod-tab {
+      flex-shrink: 0;
+      padding: 7px 16px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #767A89;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .prod-tab.active {
+      background: #333740;
+      color: #fff;
+    }
+
+    .product-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 16px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scrollbar-width: none;
+    }
+
+    .product-list::-webkit-scrollbar { display: none; }
+
+    .prod-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px 155px 16px 16px;
+      position: relative;
+      overflow: hidden;
+      min-height: 148px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .prod-card-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #2BB67D;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 14px 5px 12px;
+      border-radius: 50px 0 0 50px;
+      z-index: 2;
+    }
+
+    .prod-card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #333740;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .prod-card-subtitle {
+      font-size: 13px;
+      font-weight: 400;
+      color: #767A89;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .prod-card-tag {
+      display: inline-flex;
+      background: #E9ECFF;
+      color: #333740;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      white-space: nowrap;
+      border-radius: 50px;
+      align-self: flex-start;
+      margin-top: 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .prod-card-img {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 145px;
+      height: 148px;
+      object-fit: contain;
+      object-position: right bottom;
+    }
+
+    .prod-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .prod-card-half {
+      flex: 1;
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px 12px 12px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 180px;
+    }
+
+    .prod-card-half .prod-card-title {
+      max-width: 100%;
+      font-size: 15px;
+    }
+
+    .prod-card-half .prod-card-subtitle {
+      max-width: 100%;
+      font-size: 12px;
+    }
+
+    .prod-card-half-img {
+      position: absolute;
+      right: 0;
+      bottom: -16px;
+      width: 134px;
+      height: 134px;
+      object-fit: contain;
+      object-position: right bottom;
+    }
+
+    .prod-card-half .prod-card-tag {
+      margin-top: auto;
+      align-self: flex-start;
+    }
+
+    .product-footer {
+      padding: 8px 16px 24px;
+    }
+
+    .btn-later {
+      width: 100%;
+      padding: 17px;
+      background: transparent;
+      color: #767A89;
+      border: 1.5px solid #C3C2D3;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+
+    .btn-later:active { opacity: 0.7; }
+
+    /* ─── ACCOUNT OPEN SCREEN ─── */
+    .acc-cur {
+      flex: 1;
+      padding: 14px 0;
+      border-radius: 14px;
+      border: none;
+      background: #fff;
+      color: #333740;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .acc-cur.active {
+      background: #5B6CF9;
+      color: #fff;
+    }
+    .acc-toggle {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+    .acc-toggle input { display: none; }
+    .acc-slider {
+      position: absolute;
+      inset: 0;
+      background: #D8D9E3;
+      border-radius: 14px;
+      transition: background 0.2s;
+    }
+    .acc-slider:before {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+    }
+    .acc-toggle.on .acc-slider { background: #5B6CF9; }
+    .acc-toggle.on .acc-slider:before { transform: translateX(20px); }
+
+    /* ─── CARD DETAIL SCREEN ─── */
+    #screenCardSiyay {
+      background: #F5F5F9;
+    }
+
+    .card-detail-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #F5F5F9;
+    }
+
+    .card-detail-header {
+      padding: 12px 20px 0;
+    }
+
+    .card-detail-scroll {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: none;
+      padding: 0 20px 16px;
+      background: #F5F5F9;
+    }
+
+    .card-detail-scroll::-webkit-scrollbar { display: none; }
+
+    .card-detail-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #333740;
+      line-height: 1.2;
+      margin-bottom: 6px;
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .card-detail-subtitle {
+      font-size: 14px;
+      font-weight: 400;
+      color: #767A89;
+      line-height: 1.45;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .card-detail-img-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .card-detail-img-wrap img {
+      width: 290px;
+      height: 182px;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.18));
+    }
+
+    .card-detail-price-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(90deg, #A836FF 0%, #23EEFF 100%);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 14px 7px 16px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+
+    .card-detail-price-badge svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .card-detail-type-tabs {
+      display: flex;
+      background: #E8E8EE;
+      border-radius: 12px;
+      padding: 3px;
+      margin-bottom: 12px;
+      gap: 0;
+    }
+
+    .card-type-tab {
+      flex: 1;
+      padding: 8px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: #767A89;
+      text-align: center;
+      cursor: pointer;
+      background: transparent;
+      font-family: 'Cera Pro', sans-serif;
+      position: relative;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+
+    .card-type-tab.active {
+      background: #fff;
+      color: #333740;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+
+    .card-type-tab .tab-new {
+      position: absolute;
+      top: -8px;
+      right: 8px;
+      background: #6177F3;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 50px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .card-feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-feature-item {
+      cursor: pointer;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .card-feature-item-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+
+    .card-feature-icon {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .card-feature-icon img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .card-feature-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-feature-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #333740;
+      margin-bottom: 2px;
+      line-height: 1.2;
+    }
+
+    .card-feature-desc {
+      font-size: 13px;
+      font-weight: 400;
+      color: #767A89;
+      line-height: 1.3;
+    }
+
+    .card-feature-chevron {
+      flex-shrink: 0;
+      transition: transform 0.25s;
+    }
+
+    .card-feature-item.open .card-feature-chevron {
+      transform: rotate(90deg);
+    }
+
+    .card-feature-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      font-size: 13px;
+      font-weight: 400;
+      color: #767A89;
+      line-height: 1.5;
+      padding: 0 16px 0 60px;
+    }
+
+    .card-feature-item.open .card-feature-body {
+      max-height: 200px;
+      padding: 0 16px 14px 60px;
+    }
+
+    .card-detail-footer {
+      padding: 8px 20px 32px;
+      background: #F5F5F9;
+    }
+
+    /* ─── BOTTOM SHEET ─── */
+    .bottom-sheet-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .bottom-sheet-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .bottom-sheet {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      padding: 12px 20px 36px;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      z-index: 101;
+    }
+
+    .bottom-sheet-overlay.show .bottom-sheet {
+      transform: translateY(0);
+    }
+
+    .bottom-sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: #E2E4EC;
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+
+    .bottom-sheet-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333740;
+      margin-bottom: 6px;
+    }
+
+    .bottom-sheet-subtitle {
+      font-size: 13px;
+      color: #767A89;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .bs-criteria-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .bs-criteria-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .bs-criteria-check {
+      width: 20px;
+      height: 20px;
+      background: #ECEDF8;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .bs-criteria-check svg {
+      width: 11px;
+      height: 11px;
+    }
+
+    .bs-criteria-text {
+      font-size: 14px;
+      color: #333740;
+      line-height: 1.4;
+    }
+
+    .bs-criteria-text span {
+      color: #767A89;
+      font-size: 13px;
+    }
+
+    .bs-divider {
+      height: 1px;
+      background: #F0F1F8;
+      margin-bottom: 16px;
+    }
+
+    .bs-note {
+      font-size: 12px;
+      color: #767A89;
+      line-height: 1.45;
+    }
+
+    /* ─── CUSTOM KEYBOARD ─── */
+    .keyboard {
+      background: #D1D5DB;
+      padding: 8px 4px 4px;
+    }
+
+    .keyboard-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .key {
+      flex: 1;
+      height: 56px;
+      background: #fff;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.25);
+      transition: background 0.08s;
+      gap: 1px;
+    }
+
+    .key:active { background: #A8B0BB; }
+
+    .key-empty {
+      background: #D1D5DB;
+      box-shadow: none;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .key-empty:active { background: #D1D5DB; }
+
+    .key-num {
+      font-size: 26px;
+      font-weight: 300;
+      color: #333740;
+      line-height: 1;
+    }
+
+    .key-letters {
+      font-size: 9px;
+      font-weight: 700;
+      color: #333740;
+      letter-spacing: 0.5px;
+      line-height: 1;
+    }
+
+    .key-backspace {
+      background: #AEB4BE;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.25);
+    }
+
+    .key-backspace:active { background: #8e939e; }
+
+    /* Home indicator */
+    .home-indicator {
+      height: 30px;
+      background: #D1D5DB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .home-indicator-bar {
+      width: 120px;
+      height: 5px;
+      background: #333740;
+      border-radius: 3px;
+      opacity: 0.25;
+    }
+
+    /* Custom select trigger */
+    .custom-select {
+      background: #fff;
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 16px;
+      color: #333740;
+    }
+
+    /* Bottom sheet */
+    .select-sheet {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+      z-index: 201;
+      flex-direction: column;
+    }
+    .select-sheet.open { display: flex; }
+    .sheet-handle {
+      width: 36px; height: 4px;
+      background: #D0D0D8;
+      border-radius: 2px;
+      margin: 12px auto 4px;
+      flex-shrink: 0;
+    }
+    .sheet-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #333740;
+      padding: 8px 20px 12px;
+      flex-shrink: 0;
+    }
+    .sheet-list {
+      overflow-y: auto;
+      padding-bottom: 24px;
+    }
+    .sheet-option {
+      padding: 15px 20px;
+      font-size: 16px;
+      color: #333740;
+      cursor: pointer;
+      border-bottom: 1px solid #F0F0F5;
+    }
+    .sheet-option:last-child { border-bottom: none; }
+    .sheet-option:active { background: #F5F5F9; }
+
+    /* Card Form checkboxes */
+    .card-checkbox.checked { background: #5B6CF9 !important; border-color: #5B6CF9 !important; }
+    .card-checkbox.checked svg { opacity: 1 !important; }
+
+    /* Account Open toggles */
+    .acc-toggle {
+      position: relative;
+      display: inline-block;
+      width: 51px;
+      height: 31px;
+      flex-shrink: 0;
+    }
+    .acc-toggle input { display: none; }
+    .acc-slider {
+      position: absolute;
+      inset: 0;
+      background: #E0E0E6;
+      border-radius: 999px;
+      transition: background 0.2s;
+    }
+    .acc-slider::before {
+      content: '';
+      position: absolute;
+      width: 27px;
+      height: 27px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    }
+    .acc-toggle input:checked + .acc-slider { background: #5B6CF9; }
+    .acc-toggle input:checked + .acc-slider::before { transform: translateX(20px); }
+
+
+  /* ── Login screen (existing client) ── */
+  .v2-auth {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 16px 24px 40px; position: relative; overflow: hidden;
+  }
+  .v2-auth-back {
+    background: none; border: none; cursor: pointer;
+    padding: 4px 0; display: flex; align-items: center; width: 36px;
+  }
+  .v2-auth-body {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding-bottom: 60px;
+  }
+  .v2-auth-title { font-size: 28px; font-weight: 700; color: #333740; margin: 0 0 8px; }
+  .v2-auth-subtitle { font-size: 14px; color: #767A89; text-align: center; line-height: 1.45; margin: 0 0 36px; }
+  .v2-auth-fields { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+  .v2-auth-field { display: flex; flex-direction: column; gap: 6px; }
+  .v2-auth-label { font-size: 13px; color: #767A89; }
+  .v2-auth-input {
+    width: 100%; height: 52px; background: #fff; border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; align-items: center; padding: 0 18px;
+  }
+  .v2-auth-input--error { box-shadow: 0 0 0 1.5px #e03131; }
+  .v2-auth-input input {
+    width: 100%; border: none; outline: none; background: transparent;
+    font-family: 'Cera Pro', sans-serif; font-size: 16px; color: #333740;
+  }
+  .v2-auth-submit { margin-top: 32px; width: 100%; height: 52px; border-radius: 14px; border: none; background: #6177F3; color: #fff; font-family: 'Cera Pro', sans-serif; font-size: 17px; font-weight: 700; cursor: pointer; }
+  .v2-auth-restore { margin-top: 18px; background: none; border: none; font-size: 15px; font-weight: 600; color: #6177F3; cursor: pointer; font-family: 'Cera Pro', sans-serif; }
+  .v2-modal-overlay {
+    position: absolute; inset: 0; background: rgba(30,33,50,0.55);
+    display: flex; align-items: center; justify-content: center; padding: 0 16px; z-index: 10;
+  }
+  .v2-modal {
+    background: #fff; border-radius: 20px; padding: 24px 20px 20px;
+    width: calc(100% - 32px); display: flex; flex-direction: column; gap: 12px;
+  }
+  .v2-modal-title { font-size: 17px; font-weight: 700; color: #333740; margin: 0; }
+  .v2-modal-text { font-size: 14px; color: #333740; line-height: 1.5; margin: 0; }
+  .v2-modal-btn { margin-top: 4px; width: 100%; height: 52px; border-radius: 14px; border: none; background: #6177F3; color: #fff; font-family: 'Cera Pro', sans-serif; font-size: 17px; font-weight: 700; cursor: pointer; }
+  </style>
+</head>
+<body>
+<div class="phone-frame">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-time">9:41</div>
+    <div class="status-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12">
+        <rect x="0" y="7" width="3" height="5" rx="0.5"/>
+        <rect x="4.5" y="5" width="3" height="7" rx="0.5"/>
+        <rect x="9" y="2.5" width="3" height="9.5" rx="0.5"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.5"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12">
+        <path d="M8 9.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
+        <path d="M8 6C5.8 6 3.8 6.9 2.3 8.3l1.4 1.4C4.8 8.6 6.3 8 8 8s3.2.6 4.3 1.7l1.4-1.4C12.2 6.9 10.2 6 8 6z"/>
+        <path d="M8 2C4.7 2 1.7 3.3 0 5.5l1.5 1.5C3 5.3 5.4 4 8 4s5 1.3 6.5 3l1.5-1.5C14.3 3.3 11.3 2 8 2z"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12">
+        <rect x="0" y="1" width="21" height="10" rx="2.5" stroke="#000" stroke-width="1" fill="none"/>
+        <rect x="22" y="3.5" width="2" height="5" rx="1" fill="#000"/>
+        <rect x="1.5" y="2.5" width="17" height="7" rx="1.5" fill="#000"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Screen 1: Auth ── -->
+  <div class="screen" id="screenAuth">
+    <div class="content">
+      <div class="logo">
+        <img src="img/Лого белвэб.png" alt="БелВЭБ">
+      </div>
+      <h1>Добро пожаловать</h1>
+      <p class="subtitle">Введите номер телефона</p>
+      <p class="description">Чтобы войти или стать клиентами Банка БелВЭБ</p>
+      <div class="input-wrapper">
+        <input type="tel" id="phoneInput" placeholder="+375 XX XXX XX XX" value="+375 29 512 34 67">
+      </div>
+      <button class="btn-primary" onclick="goToSms()">Войти</button>
+      <p class="disclaimer">Нажимая Войти, вы соглашаетесь сбор, хранение и обработку персональных данных в целях дальнейшего взаимодействия.</p>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item"><div class="nav-icon"><img src="img/главная.png" alt="Главная"></div></div>
+      <div class="nav-item"><div class="nav-icon"><img src="img/обмен валют.png" alt="Обмен валют"></div></div>
+      <div class="nav-item"><div class="nav-icon"><img src="img/чат.png" alt="Чат"></div></div>
+      <div class="nav-item"><div class="nav-icon"><img src="img/еще.png" alt="Ещё"></div></div>
+    </div>
+  </div>
+
+  <!-- ── Screen 2: Договор ── -->
+  <div class="screen hidden" id="screenDogovor">
+    <div class="dogovor-content">
+
+      <button class="back-btn" onclick="navigate('screenSms', 'screenDogovor')">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="dogovor-body">
+        <div class="dogovor-title">Мы предоставляем услуги согласно Договору</div>
+        <div class="dogovor-link">
+          <img src="img/document_outline_24.png" alt="">
+          <span class="dogovor-link-text">Договор о банковском обслуживании физических лиц в системах дистанционного банковского обслуживания</span>
+        </div>
+      </div>
+
+      <div class="dogovor-footer">
+        <button class="btn-primary" style="margin-bottom:0" onclick="navigate('screenReg', 'screenDogovor')">Продолжить</button>
+        <button class="btn-secondary" onclick="navigate('screenLogin', 'screenDogovor')">Я уже ваш клиент</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Screen: Login (existing client) ── -->
+  <div class="screen hidden" id="screenLogin" style="background:#F5F5F9;">
+    <div class="v2-auth">
+
+      <button class="v2-auth-back" onclick="navigate('screenDogovor','screenLogin')">
+        <svg width="20" height="16" viewBox="0 0 20 16" fill="none">
+          <path d="M8 1L1 8L8 15" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="1" y1="8" x2="19" y2="8" stroke="#333740" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <div class="v2-auth-body">
+        <h2 class="v2-auth-title">Вход</h2>
+        <p class="v2-auth-subtitle">Введите логин и пароль<br>для авторизации в UP Online</p>
+
+        <div class="v2-auth-fields">
+          <div class="v2-auth-field">
+            <span class="v2-auth-label">Логин</span>
+            <div class="v2-auth-input" id="loginInputWrap">
+              <input id="loginInput" type="text" autocomplete="username">
+            </div>
+          </div>
+          <div class="v2-auth-field">
+            <span class="v2-auth-label">Пароль</span>
+            <div class="v2-auth-input" id="loginPassWrap">
+              <input id="loginPass" type="password" autocomplete="current-password">
+            </div>
+          </div>
+        </div>
+
+        <button class="v2-auth-submit" onclick="submitLogin()">Войти</button>
+        <button class="v2-auth-restore">Восстановить пароль</button>
+      </div>
+
+      <div class="v2-modal-overlay" id="loginModal" style="display:none;">
+        <div class="v2-modal">
+          <p class="v2-modal-title">Внимание</p>
+          <p class="v2-modal-text">Ваш логин +375295123467.<br>На ваш номер телефона +37529***3467 был отправлен пароль.</p>
+          <button class="v2-modal-btn" onclick="closeLoginModal()">Спасибо</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Screen 4: Registration ── -->
+  <div class="screen hidden" id="screenReg">
+
+    <div class="reg-navbar">
+      <button class="back-btn" onclick="navigate('screenDogovor', 'screenReg')">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="reg-navbar-title">Регистрация</span>
+    </div>
+
+    <div class="reg-content">
+      <div class="reg-hint">Для регистрации введите имя и фамилию</div>
+
+      <div class="reg-field">
+        <label class="reg-label">Имя</label>
+        <input class="reg-input" id="regName" type="text" oninput="updateRegBtn()">
+      </div>
+
+      <div class="reg-field">
+        <label class="reg-label">Фамилия</label>
+        <input class="reg-input" id="regSurname" type="text" oninput="updateRegBtn()">
+      </div>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <div class="reg-footer">
+      <button class="btn-primary-muted" id="regBtn" onclick="if(this.classList.contains('active-btn')){pinNextScreen='screenBio';pinMode='create';pinBackFn=()=>navigate('screenReg','screenPin');document.getElementById('pinTitle').textContent='Придумайте ПИН-ключ';document.getElementById('pinDesc').textContent='Пин-ключ будет использоваться для входа в приложение и подтверждения операции';navigate('screenPin','screenReg')}">Продолжить</button>
+    </div>
+
+  </div>
+
+  <!-- ── Screen 5: PIN ── -->
+  <div class="screen hidden" id="screenPin">
+    <div class="pin-screen-content">
+
+      <button class="back-btn" onclick="pinBack()">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="pin-heading">
+        <div class="pin-title" id="pinTitle">Придумайте ПИН-ключ</div>
+        <p class="pin-desc" id="pinDesc">Пин-ключ будет использоваться для входа в приложение и подтверждения операции</p>
+      </div>
+
+      <div class="pin-dots" id="pinDots">
+        <div class="pin-dot" id="pd0"></div>
+        <div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div>
+        <div class="pin-dot" id="pd3"></div>
+        <div class="pin-dot" id="pd4"></div>
+        <div class="pin-dot" id="pd5"></div>
+      </div>
+
+      <div class="pin-numpad">
+        <div class="pin-row">
+          <div class="pin-key" onclick="pinPress('1')"><img src="img/Цифры/1.png" alt="1"></div>
+          <div class="pin-key" onclick="pinPress('2')"><img src="img/Цифры/2.png" alt="2"></div>
+          <div class="pin-key" onclick="pinPress('3')"><img src="img/Цифры/3.png" alt="3"></div>
+        </div>
+        <div class="pin-row">
+          <div class="pin-key" onclick="pinPress('4')"><img src="img/Цифры/4.png" alt="4"></div>
+          <div class="pin-key" onclick="pinPress('5')"><img src="img/Цифры/5.png" alt="5"></div>
+          <div class="pin-key" onclick="pinPress('6')"><img src="img/Цифры/6.png" alt="6"></div>
+        </div>
+        <div class="pin-row">
+          <div class="pin-key" onclick="pinPress('7')"><img src="img/Цифры/7.png" alt="7"></div>
+          <div class="pin-key" onclick="pinPress('8')"><img src="img/Цифры/8.png" alt="8"></div>
+          <div class="pin-key" onclick="pinPress('9')"><img src="img/Цифры/9.png" alt="9"></div>
+        </div>
+        <div class="pin-row">
+          <div class="pin-key-empty"></div>
+          <div class="pin-key" onclick="pinPress('0')"><img src="img/Цифры/0.png" alt="0"></div>
+          <div class="pin-key-backspace" onclick="pinBackspace()"><img src="img/Цифры/del.png" alt="del"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Screen 6: Biometric ── -->
+  <div class="screen hidden" id="screenBio">
+    <div class="bio-content">
+
+      <button class="back-btn" onclick="navigate('screenPin', 'screenBio')">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+        <div class="bio-illustration">
+          <img class="bio-fingerprint" src="img/Android Fingerprint.png" alt="Fingerprint">
+          <div class="bio-faceid">
+            <img src="img/Face ID.png" alt="Face ID" width="56" height="56">
+          </div>
+        </div>
+
+        <div class="bio-body">
+          <div class="bio-title">Подключите биометрию</div>
+          <p class="bio-label">Плюсы подключения:</p>
+          <ul class="bio-list">
+            <li>Быстрый и удобный вход в приложение</li>
+            <li>Дополнительная защита</li>
+            <li>Защита от мошенников</li>
+            <li>Подтверждение операций</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bio-footer">
+        <button class="btn-primary" style="margin-bottom:0" onclick="navigate('screenCategories', 'screenBio')">Подключить</button>
+        <button class="btn-skip" onclick="navigate('screenCategories', 'screenBio')">Пропустить</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Screen 7: Categories ── -->
+  <div class="screen hidden" id="screenCategories">
+    <div class="cat-content">
+
+      <button class="back-btn" onclick="navigate('screenBio', 'screenCategories')">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="cat-title">Для чего вам нужен UP Online?</div>
+      <p class="cat-subtitle">Выберете все подходящие категории, что бы мы могли подготовить приложение для Вас!</p>
+
+      <div class="cat-chips">
+        <div class="chip chip-active" onclick="toggleChip(this)">🦅 Переводы</div>
+        <div class="chip chip-active" onclick="toggleChip(this)">💵 Обмен валют</div>
+        <div class="chip chip-active" onclick="toggleChip(this)">📋 Платежи</div>
+        <div class="chip chip-active" onclick="toggleChip(this)">🛒 Покупки</div>
+        <div class="chip" onclick="toggleChip(this)">🎾 Категория 6</div>
+        <div class="chip" onclick="toggleChip(this)">🏦 Кредиты</div>
+        <div class="chip" onclick="toggleChip(this)">📊 Депозиты</div>
+        <div class="chip" onclick="toggleChip(this)">🧋 Категория 7</div>
+        <div class="chip" onclick="toggleChip(this)">🍾 Категория 8</div>
+        <div class="chip" onclick="toggleChip(this)">🍿 Категория 9</div>
+        <div class="chip" onclick="toggleChip(this)">🥇 Категория 10</div>
+      </div>
+
+    </div>
+
+    <div class="cat-footer" style="padding: 20px 24px 32px;">
+      <button class="btn-primary" style="margin-bottom:0" onclick="navigate('screenProduct', 'screenCategories')">Продолжить</button>
+    </div>
+  </div>
+
+  <!-- ── Screen 8: Product Selection ── -->
+  <div class="screen hidden" id="screenProduct">
+    <div class="product-content">
+
+      <div class="product-header" style="position:relative;">
+        <button class="back-btn" onclick="navigate('screenCategories', 'screenProduct')" style="position:absolute;left:0;top:50%;transform:translateY(-50%);">
+          <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+            <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="product-title">Выберите продукт</div>
+      </div>
+
+      <div class="product-tabs">
+        <div class="prod-tab active">Для вас</div>
+        <div class="prod-tab">Карты</div>
+        <div class="prod-tab">Кредиты</div>
+        <div class="prod-tab">Пакеты услуг</div>
+      </div>
+
+      <div class="product-list">
+
+        <!-- Карта Мечтай -->
+        <div class="prod-card" onclick="navigate('screenCardSiyay', 'screenProduct')" style="cursor:pointer">
+          <div class="prod-card-title">Карта Мечтай</div>
+          <div class="prod-card-subtitle">Манибек до 2% на любимые магазины и категории</div>
+          <div class="prod-card-tag">Бесплатный выпуск</div>
+          <div style="position:absolute;right:0;top:0;bottom:0;width:145px;">
+            <img class="prod-card-img" src="img/карта сияй.png?v=2" alt="" style="position:absolute;top:60%;bottom:auto;transform:translateY(-50%);right:0;width:145px;height:115px;">
+          </div>
+          <div class="prod-card-badge">Выбор клиентов</div>
+        </div>
+
+        <!-- Потребительский кредит -->
+        <div class="prod-card">
+          <div class="prod-card-title">Потребительский кредит</div>
+          <div class="prod-card-subtitle">На любые цели<br>Быстрое рассмотрение</div>
+          <div class="prod-card-tag">Фиксированная ставка 15%</div>
+          <img class="prod-card-img" src="img/коины.png" alt="">
+        </div>
+
+        <!-- Счёт + Депозит -->
+        <div class="prod-row">
+          <div class="prod-card-half" onclick="navigate('screenAccountOpen','screenProduct')" style="cursor:pointer">
+            <div class="prod-card-title">Открыть счет</div>
+            <div class="prod-card-subtitle">BYN, USD, EUR</div>
+            <img class="prod-card-half-img" src="img/кошелек.png" alt="">
+            <div class="prod-card-tag">Бесплатно 5 счетов</div>
+          </div>
+          <div class="prod-card-half">
+            <div class="prod-card-title">Открыть депозит</div>
+            <div class="prod-card-subtitle">BYN, USD, EUR</div>
+            <img class="prod-card-half-img" src="img/депозиты.png" alt="">
+            <div class="prod-card-tag">Информация</div>
+          </div>
+        </div>
+
+        <!-- Дебетовые карты -->
+        <div class="prod-card">
+          <div class="prod-card-title">Дебетовые карты</div>
+          <div class="prod-card-subtitle">Манибек до 2% на любимые магазины и категории</div>
+          <div class="prod-card-tag">Бесплатный выпуск</div>
+          <img class="prod-card-img" src="img/дебет карты.png" alt="">
+        </div>
+
+      </div>
+
+      <div class="product-footer">
+        <button class="btn-later" onclick="navigate('screenLater', 'screenProduct')">Оформить позже</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Screen: Оформить позже ── -->
+  <div class="screen hidden" id="screenLater">
+    <div style="position:relative;width:100%;height:100%;">
+      <img src="img/main/603754.png" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+      <button class="back-btn" onclick="navigate('screenProduct', 'screenLater')" style="position:absolute;left:16px;top:16px;">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Screen 9: Card Siyay Detail ── -->
+  <div class="screen hidden" id="screenCardSiyay">
+    <div class="card-detail-content">
+
+      <div class="card-detail-header">
+        <button class="back-btn" onclick="navigate('screenProduct', 'screenCardSiyay')" style="margin-bottom:0">
+          <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+            <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="card-detail-scroll">
+
+        <div class="card-detail-title">Повышенный манибек<br>с картой Мечтай</div>
+        <div class="card-detail-subtitle">Выбирайте любимые магазины и получайте повышенный Money-back</div>
+
+        <div class="card-detail-img-wrap">
+          <img src="img/карта сияй фулл.png?v=2" alt="Карта Мечтай">
+        </div>
+
+        <div style="display:flex;justify-content:center;">
+          <div class="card-detail-price-badge" onclick="openPriceSheet()">
+            Бесплатно или 20 BYN/мес.
+            <svg viewBox="0 0 14 14" fill="none">
+              <path d="M4.5 3.5l5 3.5-5 3.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card-detail-type-tabs">
+          <button class="card-type-tab active" onclick="switchCardTab(this)">Пластиковая карта</button>
+          <button class="card-type-tab" onclick="switchCardTab(this)">Платёжный стикер<span class="tab-new">NEW</span></button>
+        </div>
+
+        <div class="card-feature-list">
+          <div class="card-feature-item" onclick="toggleFeature(this)">
+            <div class="card-feature-item-header">
+              <div class="card-feature-icon"><img src="img/звезда.png" alt=""></div>
+              <div class="card-feature-text">
+                <div class="card-feature-title">Бесконтактная карта-наклейка</div>
+                <div class="card-feature-desc">Вид бесконтактных карт</div>
+              </div>
+              <svg class="card-feature-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+                <path d="M1 1l5 5-5 5" stroke="#C3C2D3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="card-feature-body">Карта-наклейка крепится на смартфон и работает как бесконтактная банковская карта для оплаты покупок.</div>
+          </div>
+          <div class="card-feature-item" onclick="toggleFeature(this)">
+            <div class="card-feature-item-header">
+              <div class="card-feature-icon"><img src="img/звезда.png" alt=""></div>
+              <div class="card-feature-text">
+                <div class="card-feature-title">Бесплатный выпуск</div>
+                <div class="card-feature-desc">оформить карту совершенно бесплатно</div>
+              </div>
+              <svg class="card-feature-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+                <path d="M1 1l5 5-5 5" stroke="#C3C2D3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="card-feature-body">Выпуск карты абсолютно бесплатный. Никаких скрытых платежей при оформлении.</div>
+          </div>
+          <div class="card-feature-item" onclick="toggleFeature(this)">
+            <div class="card-feature-item-header">
+              <div class="card-feature-icon"><img src="img/звезда.png" alt=""></div>
+              <div class="card-feature-text">
+                <div class="card-feature-title">Онлайн оформление</div>
+                <div class="card-feature-desc">+ доставка на дом</div>
+              </div>
+              <svg class="card-feature-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+                <path d="M1 1l5 5-5 5" stroke="#C3C2D3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="card-feature-body">Оформите карту прямо в приложении. Курьер доставит её к вам домой в удобное время.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card-detail-footer">
+        <button class="btn-primary" style="margin-bottom:0" onclick="navigate('screenMSI','screenCardSiyay')">Продолжить</button>
+      </div>
+
+    </div>
+
+    <!-- Bottom sheet: критерии бесплатности -->
+    <div class="bottom-sheet-overlay" id="priceSheet" onclick="closePriceSheet(event)">
+      <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="bottom-sheet-handle"></div>
+        <div class="bottom-sheet-title">Бесплатное обслуживание</div>
+        <div class="bottom-sheet-subtitle">Карта бесплатна при выполнении одного из условий:</div>
+        <div class="bs-criteria-list">
+          <div class="bs-criteria-item">
+            <div class="bs-criteria-check">
+              <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-4.5" stroke="#6177F3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="bs-criteria-text">Оборот по карте от 300 BYN/мес.<br><span>Любые покупки и платежи</span></div>
+          </div>
+          <div class="bs-criteria-item">
+            <div class="bs-criteria-check">
+              <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-4.5" stroke="#6177F3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="bs-criteria-text">Остаток на счетах от 1 000 BYN<br><span>На конец каждого месяца</span></div>
+          </div>
+          <div class="bs-criteria-item">
+            <div class="bs-criteria-check">
+              <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-4.5" stroke="#6177F3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="bs-criteria-text">Зарплатный проект БелВЭБ<br><span>Получение зарплаты на карту банка</span></div>
+          </div>
+        </div>
+        <div class="bs-divider"></div>
+        <div class="bs-note">Если условия не выполнены — стоимость обслуживания составит 20 BYN/мес.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Screen: МСИ ── -->
+  <div class="screen hidden" id="screenMSI" style="background:#F5F5F9;">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:center;padding:16px 24px;position:relative;flex-shrink:0;">
+      <button onclick="navigate('screenCardSiyay','screenMSI')" style="background:none;border:none;cursor:pointer;position:absolute;left:24px;padding:0;">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div style="font-size:18px;font-weight:700;color:#333740;">МСИ</div>
+    </div>
+
+    <!-- Content -->
+    <div style="flex:1;display:flex;flex-direction:column;padding:16px 24px 24px;gap:20px;">
+
+      <!-- Icon -->
+      <div style="display:flex;justify-content:center;padding:32px 0 24px;">
+        <div style="width:88px;height:88px;background:linear-gradient(135deg,#6177F3,#8B5CF6);border-radius:28px;display:flex;align-items:center;justify-content:center;">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+            <rect x="8" y="14" width="28" height="20" rx="3" stroke="#fff" stroke-width="2.2"/>
+            <path d="M8 20h28" stroke="#fff" stroke-width="2.2"/>
+            <rect x="12" y="25" width="8" height="3" rx="1" fill="#fff"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <div style="text-align:center;">
+        <div style="font-size:22px;font-weight:700;color:#333740;margin-bottom:10px;">Межбанковская система<br>идентификации</div>
+        <div style="font-size:15px;color:#767A89;line-height:1.6;">Для оформления карты мы используем МСИ — государственную систему проверки личности. Ваши данные будут получены из защищённой базы данных.</div>
+      </div>
+
+      <!-- Info blocks -->
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+        <div style="background:#fff;border-radius:16px;padding:18px 20px;display:flex;align-items:flex-start;gap:14px;">
+          <div style="width:36px;height:36px;background:#EEF0FE;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <circle cx="9" cy="6" r="3" stroke="#5B6CF9" stroke-width="1.8"/>
+              <path d="M3 16c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#5B6CF9" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:600;color:#333740;margin-bottom:3px;">Ваши данные в безопасности</div>
+            <div style="font-size:13px;color:#767A89;line-height:1.5;">Персональные данные передаются по защищённому каналу и не хранятся в приложении</div>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:16px;padding:18px 20px;display:flex;align-items:flex-start;gap:14px;">
+          <div style="width:36px;height:36px;background:#EEF0FE;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M4 9l3.5 3.5L14 6" stroke="#5B6CF9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="9" cy="9" r="7.5" stroke="#5B6CF9" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:600;color:#333740;margin-bottom:3px;">Быстрая проверка</div>
+            <div style="font-size:13px;color:#767A89;line-height:1.5;">Идентификация занимает несколько секунд — вводить данные вручную не потребуется</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Button -->
+    <div style="padding:16px 24px 32px;flex-shrink:0;">
+      <button class="btn-primary" style="margin-bottom:0;" onclick="navigate('screenCardForm','screenMSI')">Продолжить</button>
+    </div>
+
+  </div>
+
+  <!-- ── Screen: Card Form ── -->
+  <div class="screen hidden" id="screenCardForm" style="background:#F5F5F9;">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:center;padding:16px 24px;position:relative;flex-shrink:0;">
+      <button onclick="navigate('screenMSI','screenCardForm')" style="background:none;border:none;cursor:pointer;position:absolute;left:24px;padding:0;">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div style="font-size:18px;font-weight:700;color:#333740;">Оформление карты</div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div style="flex:1;overflow-y:auto;padding:8px 16px 24px;display:flex;flex-direction:column;gap:20px;">
+
+      <!-- Имя -->
+      <div>
+        <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Имя (латиницей) из паспорта</div>
+        <div style="background:#fff;border-radius:14px;padding:16px 18px;">
+          <input type="text" placeholder="IVAN" style="width:100%;border:none;outline:none;font-size:17px;font-weight:600;color:#333740;background:transparent;font-family:inherit;">
+        </div>
+      </div>
+
+      <!-- Фамилия -->
+      <div>
+        <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Фамилия (латиницей) из паспорта</div>
+        <div style="background:#fff;border-radius:14px;padding:16px 18px;">
+          <input type="text" placeholder="IVANOV" style="width:100%;border:none;outline:none;font-size:17px;font-weight:600;color:#333740;background:transparent;font-family:inherit;">
+        </div>
+      </div>
+
+      <!-- Кодовое слово -->
+      <div>
+        <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Кодовое слово (кириллицей)</div>
+        <div style="background:#fff;border-radius:14px;padding:16px 18px;">
+          <input type="text" placeholder="Гранит" style="width:100%;border:none;outline:none;font-size:17px;color:#333740;background:transparent;font-family:inherit;">
+        </div>
+      </div>
+
+      <!-- Новый счёт в BYN -->
+      <div style="background:#EDEEF5;border-radius:14px;padding:16px 18px;">
+        <div style="font-size:16px;font-weight:700;color:#333740;margin-bottom:6px;">Новый счёт в BYN</div>
+        <div style="font-size:14px;color:#6B6F7A;line-height:1.5;">При оформлении карты Мечтай Вам будет бесплатно открыт новый счёт</div>
+      </div>
+
+    </div>
+
+    <!-- Чекбоксы + кнопка внизу -->
+    <div style="padding:12px 16px 32px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;">
+
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+        <div class="card-checkbox" onclick="this.classList.toggle('checked')" style="width:28px;height:28px;border-radius:8px;border:2px solid #D0D0D8;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all 0.15s;">
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none" style="opacity:0;transition:opacity 0.15s;"><path d="M1 5L5 9L13 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-size:12px;color:#333740;line-height:1.5;">С ответственностью за незаконное предоставление и распространение реквизитов карточек ознакомлен(на). <span style="color:#5B6CF9;cursor:pointer;">Подробнее</span></div>
+      </label>
+
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+        <div class="card-checkbox" onclick="this.classList.toggle('checked')" style="width:28px;height:28px;border-radius:8px;border:2px solid #D0D0D8;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all 0.15s;">
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none" style="opacity:0;transition:opacity 0.15s;"><path d="M1 5L5 9L13 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-size:12px;color:#333740;line-height:1.5;">Подтверждаю актуальность <span style="color:#5B6CF9;cursor:pointer;">персональных данных</span></div>
+      </label>
+
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+        <div class="card-checkbox" onclick="this.classList.toggle('checked')" style="width:28px;height:28px;border-radius:8px;border:2px solid #D0D0D8;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all 0.15s;">
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none" style="opacity:0;transition:opacity 0.15s;"><path d="M1 5L5 9L13 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-size:12px;color:#333740;line-height:1.5;">Согласен(на) с <span style="color:#5B6CF9;cursor:pointer;">Договором</span> и <span style="color:#5B6CF9;cursor:pointer;">Тарифами</span></div>
+      </label>
+
+      <button class="btn-primary" style="margin:4px 0 0;" onclick="submitCardForm()">Продолжить</button>
+
+    </div>
+
+  </div>
+
+  <!-- ── Screen: Passport ── -->
+  <div class="screen hidden" id="screenPassport" style="background:#F5F5F9;">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:center;padding:16px 24px;position:relative;flex-shrink:0;">
+      <button onclick="navigate('screenCardForm','screenPassport')" style="background:none;border:none;cursor:pointer;position:absolute;left:24px;padding:0;">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div style="font-size:18px;font-weight:700;color:#333740;">Персональные данные</div>
+    </div>
+
+    <!-- Content -->
+    <div style="flex:1;padding:16px 16px 0;">
+      <div style="background:#fff;border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:15px;color:#333740;line-height:1.5;"><span style="color:#8E8E93;">ФИО:</span> Иванов Иван Иванович</div>
+        <div style="font-size:15px;color:#333740;line-height:1.5;"><span style="color:#8E8E93;">Дата рождения:</span> 15.03.1990</div>
+        <div style="font-size:15px;color:#333740;line-height:1.5;"><span style="color:#8E8E93;">Серия и номер паспорта:</span> МП2345678</div>
+        <div style="font-size:15px;color:#333740;line-height:1.5;"><span style="color:#8E8E93;">Идентификационный номер:</span> 3150390A049PB1</div>
+        <div style="font-size:15px;color:#333740;line-height:1.5;"><span style="color:#8E8E93;">Дата выдачи документа:</span> 12.04.2018</div>
+        <div style="font-size:15px;color:#333740;line-height:1.5;"><span style="color:#8E8E93;">Кем выдан:</span> Центральным РУВД г. Минска</div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div style="padding:16px 16px 32px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;">
+      <button class="btn-primary" style="margin-bottom:0;" onclick="navigate('screenDelivery','screenPassport')">Подтверждаю</button>
+      <button style="width:100%;padding:17px;background:#fff;border:1.5px solid #D0D0D8;border-radius:14px;font-size:16px;font-weight:600;color:#333740;cursor:pointer;font-family:inherit;">Неверные данные</button>
+    </div>
+
+  </div>
+
+  <!-- ── Screen: Delivery ── -->
+  <div class="screen hidden" id="screenDelivery" style="background:#F5F5F9;">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:center;padding:16px 24px;position:relative;flex-shrink:0;">
+      <button onclick="navigate('screenPassport','screenDelivery')" style="background:none;border:none;cursor:pointer;position:absolute;left:24px;padding:0;">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div style="font-size:18px;font-weight:700;color:#333740;">Получение карты</div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="margin:4px 16px 20px;display:flex;background:#fff;border-radius:14px;padding:4px;gap:4px;flex-shrink:0;">
+      <button id="tabPost" onclick="switchDeliveryTab('post')" style="flex:1;padding:12px;border:none;border-radius:11px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;background:#5B6CF9;color:#fff;">По почте</button>
+      <button id="tabBranch" onclick="switchDeliveryTab('branch')" style="flex:1;padding:12px;border:none;border-radius:11px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#8E8E93;">В отделении</button>
+    </div>
+
+    <!-- Scrollable form -->
+    <div style="flex:1;overflow-y:auto;padding:0 16px 16px;display:flex;flex-direction:column;gap:16px;">
+
+      <!-- Почтовый индекс -->
+      <div>
+        <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Почтовый индекс</div>
+        <div style="background:#fff;border-radius:14px;padding:16px 18px;">
+          <input type="text" inputmode="numeric" style="width:100%;border:none;outline:none;font-size:16px;color:#333740;background:transparent;font-family:inherit;">
+        </div>
+      </div>
+
+      <!-- Область -->
+      <div>
+        <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Область (обл. центр)</div>
+        <div class="custom-select" onclick="openSheet('sheetRegion','selectRegionVal')">
+          <span id="selectRegionVal" style="color:#8E8E93;">Выбрать</span>
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 7L11 1" stroke="#8E8E93" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <!-- Город (скрыт до выбора области) -->
+      <div id="cityField" style="display:none;">
+        <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Город</div>
+        <div class="custom-select" onclick="openSheet('sheetCity','selectCityVal')">
+          <span id="selectCityVal" style="color:#8E8E93;">Выбрать</span>
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 7L11 1" stroke="#8E8E93" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <!-- Тип улицы -->
+      <div>
+        <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Тип улицы</div>
+        <div class="custom-select" onclick="openSheet('sheetStreet','selectStreetVal')">
+          <span id="selectStreetVal" style="color:#8E8E93;">Выбрать</span>
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 7L11 1" stroke="#8E8E93" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <!-- Название улицы -->
+      <div>
+        <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Название улицы</div>
+        <div style="background:#fff;border-radius:14px;padding:16px 18px;">
+          <input type="text" style="width:100%;border:none;outline:none;font-size:16px;color:#333740;background:transparent;font-family:inherit;">
+        </div>
+      </div>
+
+      <!-- Дом / Корпус / Квартира -->
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Дом</div>
+          <div style="background:#fff;border-radius:14px;padding:16px 12px;">
+            <input type="text" style="width:100%;border:none;outline:none;font-size:16px;color:#333740;background:transparent;font-family:inherit;">
+          </div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Корпус</div>
+          <div style="background:#fff;border-radius:14px;padding:16px 12px;">
+            <input type="text" style="width:100%;border:none;outline:none;font-size:16px;color:#333740;background:transparent;font-family:inherit;">
+          </div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:14px;color:#8E8E93;margin-bottom:8px;">Квартира</div>
+          <div style="background:#fff;border-radius:14px;padding:16px 12px;">
+            <input type="text" style="width:100%;border:none;outline:none;font-size:16px;color:#333740;background:transparent;font-family:inherit;">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Button -->
+    <div style="padding:16px 16px 32px;flex-shrink:0;">
+      <button class="btn-primary" style="margin-bottom:0;" onclick="pinNextScreen='screenThanks';pinMode='enter';pinBackFn=()=>navigate('screenDelivery','screenPin');document.getElementById('pinTitle').textContent='Введите ПИН-ключ';document.getElementById('pinDesc').textContent='Пин-ключ будет использоваться для входа в приложение и подтверждения операции';navigate('screenPin','screenDelivery')">Оформить карту</button>
+    </div>
+
+  </div>
+
+  <!-- Bottom sheets (вне экрана, поверх всего) -->
+
+  <!-- Overlay -->
+  <div id="sheetOverlay" onclick="closeSheet()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;"></div>
+
+  <!-- Sheet: Область -->
+  <div id="sheetRegion" class="select-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Область (обл. центр)</div>
+    <div class="sheet-list">
+      <div class="sheet-option" onclick="pickRegion('г. Минск')">г. Минск</div>
+      <div class="sheet-option" onclick="pickRegion('Минская область')">Минская область</div>
+      <div class="sheet-option" onclick="pickRegion('Брестская область')">Брестская область</div>
+      <div class="sheet-option" onclick="pickRegion('Витебская область')">Витебская область</div>
+      <div class="sheet-option" onclick="pickRegion('Гомельская область')">Гомельская область</div>
+      <div class="sheet-option" onclick="pickRegion('Гродненская область')">Гродненская область</div>
+      <div class="sheet-option" onclick="pickRegion('Могилёвская область')">Могилёвская область</div>
+    </div>
+  </div>
+
+  <!-- Sheet: Город (список формируется динамически) -->
+  <div id="sheetCity" class="select-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Город</div>
+    <div class="sheet-list" id="sheetCityList"></div>
+  </div>
+
+  <!-- Sheet: Тип улицы -->
+  <div id="sheetStreet" class="select-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Тип улицы</div>
+    <div class="sheet-list">
+      <div class="sheet-option" onclick="pickSheet('selectStreetVal','Улица')">Улица</div>
+      <div class="sheet-option" onclick="pickSheet('selectStreetVal','Проспект')">Проспект</div>
+      <div class="sheet-option" onclick="pickSheet('selectStreetVal','Переулок')">Переулок</div>
+      <div class="sheet-option" onclick="pickSheet('selectStreetVal','Бульвар')">Бульвар</div>
+      <div class="sheet-option" onclick="pickSheet('selectStreetVal','Площадь')">Площадь</div>
+      <div class="sheet-option" onclick="pickSheet('selectStreetVal','Проезд')">Проезд</div>
+      <div class="sheet-option" onclick="pickSheet('selectStreetVal','Шоссе')">Шоссе</div>
+    </div>
+  </div>
+
+  <!-- ── Screen: Account Open ── -->
+  <div class="screen hidden" id="screenAccountOpen" style="background:#F2F3F7;">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:center;padding:16px 24px;position:relative;background:#F2F3F7;">
+      <button onclick="navigate('screenProduct','screenAccountOpen')" style="background:none;border:none;cursor:pointer;position:absolute;left:24px;padding:0;">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div style="font-size:18px;font-weight:700;color:#333740;">Открытие счета</div>
+    </div>
+
+    <!-- Content -->
+    <div style="flex:1;overflow-y:auto;padding:8px 16px 24px;">
+
+      <!-- Currency picker -->
+      <div style="margin-bottom:24px;">
+        <div style="font-size:14px;color:#8E8E93;text-align:center;margin-bottom:14px;">Выберите валюту</div>
+        <div style="display:flex;gap:10px;" id="currencyPicker">
+          <button class="acc-cur active" onclick="selectCurrency(this,'BYN')">BYN</button>
+          <button class="acc-cur" onclick="selectCurrency(this,'USD')">USD</button>
+          <button class="acc-cur" onclick="selectCurrency(this,'EUR')">EUR</button>
+          <button class="acc-cur" onclick="selectCurrency(this,'RUB')">RUB</button>
+        </div>
+      </div>
+
+      <!-- Account name input -->
+      <div style="margin-bottom:6px;">
+        <div style="font-size:14px;color:#333740;font-weight:600;margin-bottom:8px;">Название счета</div>
+        <input id="accNameInput" type="text" placeholder="Текущий счет в BYN" style="width:100%;padding:16px;border-radius:14px;border:none;background:#fff;font-size:16px;color:#333740;font-family:inherit;outline:none;box-sizing:border-box;">
+        <div style="font-size:13px;color:#8E8E93;margin-top:6px;">без комиссии</div>
+      </div>
+
+      <!-- Default toggle -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:14px;padding:16px;margin-bottom:16px;">
+        <div style="font-size:16px;color:#333740;">Сделать счетом по умолчанию</div>
+        <label class="acc-toggle">
+          <input type="checkbox" onchange="this.parentElement.classList.toggle('on',this.checked)">
+          <span class="acc-slider"></span>
+        </label>
+      </div>
+
+      <!-- Agreements -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:24px;height:24px;background:#5B6CF9;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+            <svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 8L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="font-size:14px;color:#333740;line-height:1.5;">Согласен(на) с <span style="color:#5B6CF9;">Комплексным договором</span> и <span style="color:#5B6CF9;">Тарифами</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:24px;height:24px;background:#5B6CF9;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+            <svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 8L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="font-size:14px;color:#333740;line-height:1.5;">Согласен(на) на получение предложений (оферт), <span style="color:#5B6CF9;">информационных сообщений об услугах</span> ОАО «Банк БелВЭБ» и третьих лиц, партнеров ОАО «Банк БелВЭБ»</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Button -->
+    <div style="padding:16px 24px 32px;background:#F2F3F7;">
+      <button class="btn-primary" style="margin-bottom:0" onclick="navigate('screenThanks','screenAccountOpen')">Открыть счет</button>
+    </div>
+
+  </div>
+
+  <!-- ── Screen 10: Thanks ── -->
+  <div class="screen hidden" id="screenThanks" style="background:#fff;">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;">
+      <div style="font-size:72px;margin-bottom:24px;">🎉</div>
+      <div style="font-size:26px;font-weight:700;color:#333740;line-height:1.2;margin-bottom:12px;">Спасибо за тестирование!</div>
+      <div style="font-size:15px;font-weight:400;color:#767A89;line-height:1.5;max-width:280px;">Вы успешно прошли весь флоу онбординга. Ваш фидбек очень важен для нас!</div>
+    </div>
+    <div style="padding:0 24px 48px;">
+      <button class="btn-primary" style="margin-bottom:0" onclick="window.parent.postMessage('go-to-picker','*')">На главную</button>
+    </div>
+  </div>
+
+
+  <!-- ── Screen 3: SMS Code ── -->
+  <div class="screen hidden" id="screenSms">
+    <div class="sms-content">
+
+      <button class="back-btn" onclick="goBack()">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#333740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="sms-heading">
+        <div class="sms-title">Введите СМС код</div>
+        <p class="sms-desc">На номер <span id="smsPhone">+37529***3467</span> отправлен код для подтверждения</p>
+      </div>
+
+      <div class="sms-cells">
+        <div class="sms-cell active" id="sc0"></div>
+        <div class="sms-cell" id="sc1"></div>
+        <div class="sms-cell" id="sc2"></div>
+        <div class="sms-cell" id="sc3"></div>
+        <div class="sms-cell" id="sc4"></div>
+        <div class="sms-cell" id="sc5"></div>
+      </div>
+
+    </div>
+
+    <!-- Custom keyboard -->
+    <div class="keyboard">
+      <div class="keyboard-row">
+        <div class="key" onclick="pressKey('1')"><span class="key-num">1</span></div>
+        <div class="key" onclick="pressKey('2')"><span class="key-num">2</span><span class="key-letters">ABC</span></div>
+        <div class="key" onclick="pressKey('3')"><span class="key-num">3</span><span class="key-letters">DEF</span></div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key" onclick="pressKey('4')"><span class="key-num">4</span><span class="key-letters">GHI</span></div>
+        <div class="key" onclick="pressKey('5')"><span class="key-num">5</span><span class="key-letters">JKL</span></div>
+        <div class="key" onclick="pressKey('6')"><span class="key-num">6</span><span class="key-letters">MNO</span></div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key" onclick="pressKey('7')"><span class="key-num">7</span><span class="key-letters">PQRS</span></div>
+        <div class="key" onclick="pressKey('8')"><span class="key-num">8</span><span class="key-letters">TUV</span></div>
+        <div class="key" onclick="pressKey('9')"><span class="key-num">9</span><span class="key-letters">WXYZ</span></div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key key-empty"></div>
+        <div class="key" onclick="pressKey('0')"><span class="key-num">0</span></div>
+        <div class="key key-backspace" onclick="pressBackspace()">
+          <svg width="24" height="18" viewBox="0 0 24 18" fill="none">
+            <path d="M9 1H21a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H9L1 9l8-8z" stroke="#333740" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M15 6l-4 6m0-6l4 6" stroke="#333740" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-indicator">
+      <div class="home-indicator-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let smsValue = '';
+
+  function maskPhone(phone) {
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length >= 11) {
+      return '+' + digits.slice(0, 5) + '***' + digits.slice(-4);
+    }
+    return phone;
+  }
+
+  function selectCurrency(btn, currency) {
+    document.querySelectorAll('#currencyPicker .acc-cur').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const input = document.getElementById('accNameInput');
+    if (input) input.placeholder = 'Текущий счет в ' + currency;
+  }
+
+  function navigate(toId, fromId) {
+    if (fromId) document.getElementById(fromId).classList.add('hidden');
+    const to = document.getElementById(toId);
+    to.classList.remove('hidden');
+    if (toId === 'screenSms') {
+      smsValue = '';
+      updateSmsCells();
+    }
+  }
+
+  let _currentValId = null;
+
+  function openSheet(sheetId, valId) {
+    _currentValId = valId;
+    document.getElementById('sheetOverlay').style.display = 'block';
+    document.querySelectorAll('.select-sheet').forEach(s => s.classList.remove('open'));
+    document.getElementById(sheetId).classList.add('open');
+  }
+
+  function closeSheet() {
+    document.getElementById('sheetOverlay').style.display = 'none';
+    document.querySelectorAll('.select-sheet').forEach(s => s.classList.remove('open'));
+    _currentValId = null;
+  }
+
+  function pickSheet(valId, value) {
+    const el = document.getElementById(valId);
+    el.textContent = value;
+    el.style.color = '#333740';
+    closeSheet();
+  }
+
+  const regionCities = {
+    'г. Минск': ['г. Минск'],
+    'Минская область': ['г. Борисов','г. Жодино','г. Молодечно','г. Слуцк','г. Солигорск','г. Дзержинск','г. Марьина Горка','г. Несвиж'],
+    'Брестская область': ['г. Брест','г. Барановичи','г. Пинск','г. Кобрин','г. Лунинец','г. Берёза','г. Иваново'],
+    'Витебская область': ['г. Витебск','г. Орша','г. Новополоцк','г. Полоцк','г. Глубокое','г. Лепель','г. Поставы'],
+    'Гомельская область': ['г. Гомель','г. Жлобин','г. Мозырь','г. Светлогорск','г. Речица','г. Калинковичи','г. Добруш'],
+    'Гродненская область': ['г. Гродно','г. Лида','г. Волковыск','г. Слоним','г. Новогрудок','г. Скидель'],
+    'Могилёвская область': ['г. Могилёв','г. Бобруйск','г. Осиповичи','г. Горки','г. Кричев','г. Климовичи']
+  };
+
+  function pickRegion(region) {
+    const el = document.getElementById('selectRegionVal');
+    el.textContent = region;
+    el.style.color = '#333740';
+
+    // сброс города
+    const cityVal = document.getElementById('selectCityVal');
+    cityVal.textContent = 'Выбрать';
+    cityVal.style.color = '#8E8E93';
+
+    // заполняем список городов
+    const cities = regionCities[region] || [];
+    const list = document.getElementById('sheetCityList');
+    list.innerHTML = cities.map(c =>
+      `<div class="sheet-option" onclick="pickSheet('selectCityVal','${c}')">${c}</div>`
+    ).join('');
+
+    // показываем поле города
+    document.getElementById('cityField').style.display = cities.length > 0 ? 'block' : 'none';
+
+    closeSheet();
+  }
+
+  function switchDeliveryTab(tab) {
+    const post = document.getElementById('tabPost');
+    const branch = document.getElementById('tabBranch');
+    if (tab === 'post') {
+      post.style.background = '#5B6CF9'; post.style.color = '#fff';
+      branch.style.background = 'transparent'; branch.style.color = '#8E8E93';
+    } else {
+      branch.style.background = '#5B6CF9'; branch.style.color = '#fff';
+      post.style.background = 'transparent'; post.style.color = '#8E8E93';
+    }
+  }
+
+  function submitLogin() {
+    const login = document.getElementById('loginInput').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    const loginWrap = document.getElementById('loginInputWrap');
+    const passWrap = document.getElementById('loginPassWrap');
+    loginWrap.classList.toggle('v2-auth-input--error', !login);
+    passWrap.classList.toggle('v2-auth-input--error', !pass);
+    if (!login || !pass) return;
+    document.getElementById('loginModal').style.display = 'flex';
+  }
+
+  function closeLoginModal() {
+    document.getElementById('loginModal').style.display = 'none';
+    pinNextScreen = 'screenProduct';
+    pinMode = 'enter';
+    pinBackFn = () => navigate('screenLogin', 'screenPin');
+    document.getElementById('pinTitle').textContent = 'Введите ПИН-ключ';
+    document.getElementById('pinDesc').textContent = 'Пин-ключ будет использоваться для входа в приложение и подтверждения операции';
+    navigate('screenPin', 'screenLogin');
+  }
+
+  function submitCardForm() {
+    const inputs = document.querySelectorAll('#screenCardForm input[type="text"]');
+    const checkboxes = document.querySelectorAll('#screenCardForm .card-checkbox');
+    let valid = true;
+
+    inputs.forEach(inp => {
+      if (!inp.value.trim()) {
+        inp.style.borderBottom = '2px solid #FF3B30';
+        valid = false;
+      } else {
+        inp.style.borderBottom = '';
+      }
+    });
+
+    checkboxes.forEach(cb => {
+      if (!cb.classList.contains('checked')) {
+        cb.style.borderColor = '#FF3B30';
+        valid = false;
+      } else {
+        cb.style.borderColor = '#5B6CF9';
+      }
+    });
+
+    if (valid) navigate('screenPassport', 'screenCardForm');
+  }
+
+  function goToSms() {
+    const raw = document.getElementById('phoneInput').value || '+375291234567';
+    document.getElementById('smsPhone').textContent = maskPhone(raw);
+    navigate('screenSms', 'screenAuth');
+  }
+
+  function goBack() {
+    navigate('screenAuth', 'screenSms');
+  }
+
+  function updateSmsCells() {
+    for (let i = 0; i < 6; i++) {
+      const cell = document.getElementById('sc' + i);
+      cell.classList.remove('active');
+      cell.textContent = smsValue[i] !== undefined ? '•' : '';
+    }
+    if (smsValue.length < 6) {
+      document.getElementById('sc' + smsValue.length).classList.add('active');
+    }
+  }
+
+  function pressKey(digit) {
+    if (smsValue.length >= 6) return;
+    smsValue += digit;
+    updateSmsCells();
+    if (smsValue.length === 6) {
+      setTimeout(() => navigate('screenDogovor', 'screenSms'), 300);
+    }
+  }
+
+  function pressBackspace() {
+    if (smsValue.length === 0) return;
+    smsValue = smsValue.slice(0, -1);
+    updateSmsCells();
+  }
+
+  let pinValue = '';
+  let pinSaved = '';
+  let pinMode = 'create';
+  let pinNextScreen = 'screenBio';
+  let pinBackFn = () => navigate('screenReg', 'screenPin');
+
+  function pinBack() {
+    if (pinMode === 'confirm') {
+      pinValue = '';
+      pinSaved = '';
+      updatePinDots();
+      document.getElementById('pinTitle').textContent = 'Придумайте ПИН-ключ';
+      document.getElementById('pinDesc').textContent = 'Пин-ключ будет использоваться для входа в приложение и подтверждения операции';
+      pinMode = 'create';
+    } else {
+      pinBackFn();
+    }
+  }
+
+  function pinPress(digit) {
+    if (pinValue.length >= 6) return;
+    pinValue += digit;
+    updatePinDots();
+    if (pinValue.length === 6) {
+      if (pinMode === 'create') {
+        pinSaved = pinValue;
+        setTimeout(() => {
+          pinValue = '';
+          updatePinDots();
+          document.getElementById('pinTitle').textContent = 'Подтвердите ПИН-ключ';
+          document.getElementById('pinDesc').textContent = 'Введите ПИН-ключ повторно для подтверждения';
+          pinMode = 'confirm';
+        }, 300);
+      } else {
+        setTimeout(() => { navigate(pinNextScreen, 'screenPin'); pinValue = ''; pinSaved = ''; updatePinDots(); }, 300);
+      }
+    }
+  }
+
+  function pinBackspace() {
+    if (!pinValue.length) return;
+    pinValue = pinValue.slice(0, -1);
+    updatePinDots();
+  }
+
+  function updatePinDots() {
+    for (let i = 0; i < 6; i++) {
+      document.getElementById('pd' + i).classList.toggle('filled', i < pinValue.length);
+    }
+  }
+
+  function updateRegBtn() {
+    const name = document.getElementById('regName').value.trim();
+    const surname = document.getElementById('regSurname').value.trim();
+    const btn = document.getElementById('regBtn');
+    if (name && surname) {
+      btn.classList.add('active-btn');
+    } else {
+      btn.classList.remove('active-btn');
+    }
+  }
+
+  function toggleChip(el) {
+    el.classList.toggle('chip-active');
+  }
+
+  function switchCardTab(el) {
+    el.closest('.card-detail-type-tabs').querySelectorAll('.card-type-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleFeature(el) {
+    el.classList.toggle('open');
+  }
+
+  function openPriceSheet() {
+    document.getElementById('priceSheet').classList.add('show');
+  }
+
+  function closePriceSheet(e) {
+    document.getElementById('priceSheet').classList.remove('show');
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('screenSms').classList.contains('hidden')) return;
+    if (/^\d$/.test(e.key)) pressKey(e.key);
+    else if (e.key === 'Backspace') pressBackspace();
+  });
+
+  // Variant 3 flow: PIN + bio done in React, start at Categories
+  if (new URLSearchParams(window.location.search).get('v3') === '1') {
+    document.getElementById('screenAuth').classList.add('hidden');
+    document.getElementById('screenCategories').classList.remove('hidden');
+  }
+
+  // Variant 3 card flow: start at Card Siyay detail, skip MSI
+  if (new URLSearchParams(window.location.search).get('v3card') === '1') {
+    document.getElementById('screenAuth').classList.add('hidden');
+    document.getElementById('screenCardSiyay').classList.remove('hidden');
+    const cardSiyayBtn = document.querySelector('#screenCardSiyay .btn-primary');
+    if (cardSiyayBtn) {
+      cardSiyayBtn.onclick = () => navigate('screenCardForm', 'screenCardSiyay');
+    }
+  }
+
+  // Post-auth flow: skip phone/sms/contract/reg, start at PIN, skip MSI
+  if (new URLSearchParams(window.location.search).get('postauth') === '1') {
+    // Hide default start screen, show PIN
+    document.getElementById('screenAuth').classList.add('hidden');
+    pinNextScreen = 'screenBio';
+    pinMode = 'create';
+    pinBackFn = () => window.parent.postMessage('go-to-picker', '*');
+    document.getElementById('pinTitle').textContent = 'Придумайте ПИН-ключ';
+    document.getElementById('pinDesc').textContent = 'Пин-ключ будет использоваться для входа в приложение и подтверждения операции';
+    document.getElementById('screenPin').classList.remove('hidden');
+
+    // Wire CardSiyay "Продолжить" to skip MSI → go directly to CardForm
+    const cardSiyayBtn = document.querySelector('#screenCardSiyay .btn-primary');
+    if (cardSiyayBtn) {
+      cardSiyayBtn.onclick = () => navigate('screenCardForm', 'screenCardSiyay');
+    }
+
+    // CardForm back button → go to CardSiyay (MSI was skipped)
+    const cardFormBackBtn = document.querySelector('#screenCardForm button[onclick*="screenMSI"]');
+    if (cardFormBackBtn) {
+      cardFormBackBtn.onclick = () => navigate('screenCardSiyay', 'screenCardForm');
+    }
+  }
+</script>
+</body>
+</html>
