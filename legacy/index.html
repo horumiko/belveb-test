@@ -55,6 +55,24 @@
       position: relative;
     }
 
+    @media (min-width: 431px) {
+      body {
+        background: #e9ecf5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100svh;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      .phone-frame {
+        width: 375px;
+        height: min(812px, 95svh);
+        border-radius: 44px;
+        box-shadow: 0 34px 70px rgba(19, 23, 51, 0.25), 0 0 0 1px rgba(20, 25, 50, 0.08);
+      }
+    }
+
     /* Status bar */
     .status-bar {
       display: flex;
